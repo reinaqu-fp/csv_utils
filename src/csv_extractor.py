@@ -8,7 +8,7 @@ import argparse
 import csv
 import logging
 
-def extrae_columnas_csv(fichero_entrada, fichero_salida, columnas_a_extraer=[], encoding='latin-1'):
+def extrae_columnas_csv(fichero_entrada, fichero_salida, columnas_a_extraer=[], encoding='latin-1', separator=","):
     '''
     Esta función genera un fichero csv a partir del fichero csv dado en el parámetro fichero_entrada
     pero que solo tiene las columnas especificadas en el parámetro columnas_a_extraer.
@@ -24,10 +24,10 @@ def extrae_columnas_csv(fichero_entrada, fichero_salida, columnas_a_extraer=[], 
     @type encoding: str 
     '''    
     with open(fichero_entrada, encoding=encoding) as rf:
-        lector = csv.DictReader(rf)
+        lector = csv.DictReader(rf, delimiter=separator)
         with open(fichero_salida, 'w', encoding=encoding,  newline='') as wf:
             dict_cabecera = crea_dict_cabecera (columnas_a_extraer)
-            dw = csv.DictWriter(wf, fieldnames=dict_cabecera, quoting=csv.QUOTE_ALL, quotechar='"')
+            dw = csv.DictWriter(wf, fieldnames=dict_cabecera, quoting=csv.QUOTE_ALL, quotechar='"', delimiter=separator)
             dw.writeheader()
             #Vamos leyendo los diccionarios del lector
             for dict_lector in lector:
@@ -68,12 +68,27 @@ def nombre_fichero_salida(fichero_entrada):
         sin la cadena ".csv" y terminado en "_cut.csv"
     '''
     return fichero_entrada.replace(".csv","")+"_cut.csv"
-    
+
+def separador(args):
+    '''
+    @return: Un objeto que define los argumentos que se esperan si se usa este módulo
+    desde la linea de comandos.
+    @type args: argparse.Namespace
+    @return: El carácter separador usado para separar una columna de otra en el csv. Si
+    el parámetro no se especifica, el separador por defecto es la coma.
+    @rtype: str
+    '''
+    sep=","
+    if args.separator:
+        sep = args.separator[0]
+    return sep
+
 def main():
     '''
     Función principal para gestionar la línea de argumentos
     '''
     args = parse_arg()
+    print(type(args))
     logging.basicConfig(level=logging.INFO)
     
     fichero_entrada = args.input[0]
@@ -81,10 +96,12 @@ def main():
     encoding = 'latin-1'
     if args.encoding:
         encoding = args.encoding[0]
+    sep = separador (args) 
     logging.info("Escribiendo en ..."+ fichero_salida)
     extrae_columnas_csv(fichero_entrada, fichero_salida,
                                       args.cols, 
-                                      encoding=encoding)
+                                      encoding=encoding,
+                                      separator= sep)
 
 
 
@@ -97,8 +114,9 @@ def parse_arg():
     descr = 'The result is a new csv with only the columns specified in the argument cols'
     parser = argparse.ArgumentParser(prog='csv_extractor', description=descr)
     parser.add_argument('-input', nargs=1, type=str, help='Original csv file')
-    parser.add_argument('-cols', nargs='+', type=str, help='Names of the columns to extract. They should be present as a header in the original csv file.')
     parser.add_argument('-encoding', nargs='?', help='If omitted, the default value is latin-1, you can change it to utf-8')
+    parser.add_argument('-separator', nargs='?', help='If omitted, the default value is comma ","')
+    parser.add_argument('-cols', nargs='+', type=str, help='Names of the columns to extract. They should be present as a header in the original csv file.')
     return parser.parse_args()
 
 
