@@ -69,16 +69,31 @@ def nombre_fichero_salida(fichero_entrada):
     '''
     return fichero_entrada.replace(".csv","")+"_cut.csv"
 
+def encoding(args):
+    '''
+    @return: Un objeto que define los argumentos que se esperan si se usa este módulo
+    desde la linea de comandos.
+    @type args: argparse.Namespace
+    @return: La codificación extraída de los argumentos de la línea de comandos. Si
+    el parámetro no se especifica, la codificación por defecto es utf-8.
+    @rtype: str
+    '''
+    enc=","
+    if args.encoding:
+        enc = args.encoding[0]
+    return enc
+
 def separador(args):
     '''
     @return: Un objeto que define los argumentos que se esperan si se usa este módulo
     desde la linea de comandos.
     @type args: argparse.Namespace
-    @return: El carácter separador usado para separar una columna de otra en el csv. Si
-    el parámetro no se especifica, el separador por defecto es la coma.
+    @return: El carácter separador usado para separar una columna de otra en el csv extraido
+    de los argumentos de la línea de comandos. Si el parámetro no se especifica, el separador 
+    por defecto es la coma.
     @rtype: str
     '''
-    sep=","
+    encoding = 'latin-1'
     if args.separator:
         sep = args.separator[0]
     return sep
@@ -93,14 +108,12 @@ def main():
     
     fichero_entrada = args.input[0]
     fichero_salida = nombre_fichero_salida (fichero_entrada)
-    encoding = 'latin-1'
-    if args.encoding:
-        encoding = args.encoding[0]
+    enc = encoding(args)
     sep = separador (args) 
     logging.info("Escribiendo en ..."+ fichero_salida)
     extrae_columnas_csv(fichero_entrada, fichero_salida,
                                       args.cols, 
-                                      encoding=encoding,
+                                      encoding=enc,
                                       separator= sep)
 
 
