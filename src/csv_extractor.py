@@ -93,7 +93,7 @@ def separador(args):
     por defecto es la coma.
     @rtype: str
     '''
-    encoding = 'latin-1'
+    sep = 'latin-1'
     if args.separator:
         sep = args.separator[0]
     return sep
