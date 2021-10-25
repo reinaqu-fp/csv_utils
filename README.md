@@ -17,7 +17,7 @@ Puedes ver un ejemplo en el módulo `csv_extractor_test`:
                                       columnas_a_extraer)
 ```
 
-Además, hay dos parámetros (`encoding` y `separator`) que toman los valores por defecto `latin-1` y `","`, respectivamente, si no se especifican, y que puedes usar si tu archivos csv tiene una codificación distinta de `latin-1` o un separador distinto de la coma, los puedes especificar usando estos parámetros. Puedes ver un ejemplo del uso de estos parámetros en el siguiente trozo de código:
+Además, hay dos parámetros (`encoding` y `separator`) que toman los valores por defecto `latin-1` y `","`, respectivamente, si no se especifican, y que puedes usar si tu archivo csv tiene una codificación distinta de `latin-1` o un separador distinto de la coma, los puedes especificar usando estos parámetros. Puedes ver un ejemplo del uso de estos parámetros en el siguiente trozo de código:
 
 ```python
     columnas_a_extraer=['retweet_count', 'favorited','retweeted', 'created_at', 'in_reply_to_user_id_str']
