@@ -22,6 +22,8 @@ def extrae_columnas_csv(fichero_entrada, fichero_salida, columnas_a_extraer=[], 
     @param encoding: Cadena que indica la codificación en la que está el fichero original. Si no se 
     especifica, por defecto se supone que el archivo está codificado en latin-1 (codificación de Windows).
     @type encoding: str 
+    @param separator: Cadena que indica el separador usado para generar el csv
+    @type separator: str
     '''    
     with open(fichero_entrada, encoding=encoding) as rf:
         lector = csv.DictReader(rf, delimiter=separator)
