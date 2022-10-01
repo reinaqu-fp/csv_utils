@@ -11,6 +11,7 @@ import csv
 from datetime import datetime, timedelta
 from csv_extractor import *
 from generators import *
+from json_utils import *
 
 
 def genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter=',', encoding='latin-1'):
@@ -184,12 +185,17 @@ def main():
 
     fichero_entrada = args.input[0]
     fichero_salida = nombre_fichero_salida_generado(fichero_entrada)
-    encoding = 'utf-8'
+    encoding = 'latin-1'
     if args.encoding:
-        encoding = args.encoding[0]
+        encoding = args.encoding
     logging.info("Escribiendo en ..." + fichero_salida)
-    genera_columnas_csv(fichero_entrada, args.cols, encoding=encoding)
+    conf_dict = crea_config_de_json(args.config[0])
+    separator = ','
+    if args.separator:
+        separator = args.separator
+    genera_columnas_csv(fichero_entrada, conf_dict, encoding=encoding, delimiter=separator)
 
+    
 
 def parse_arg():
     '''
@@ -197,13 +203,16 @@ def parse_arg():
     desde la linea de comandos
     @rtype: argparse.Namespace
     '''
-    descr = 'The result is a new csv with the new columns specified in the argument new_cols'
-    parser = argparse.ArgumentParser(prog='csv_improver', description=descr)
+    descr = 'The result is a new csv with the new columns specified in the argument config by means of a json config file'
+    parser = argparse.ArgumentParser(prog='csv_generator', description=descr)
     parser.add_argument('-input', nargs=1, type=str, help='Original csv file')
-    parser.add_argument('-new_cols', nargs='+', type=str,
-                        help='Dictionary with the specifications of the new columns to be added.}')
+    parser.add_argument('-config', nargs=1, type=str,
+                        help='JSON file with the configuration of columns.')
     parser.add_argument('-encoding', nargs='?',
-                        help='If omitted, the default value is utf-8, you can change it to utf-8')
+                        help='If omitted, the default value is latin-1, you can change it to utf-8')
+    parser.add_argument('-separator', nargs='?',
+                        help='If omitted, the default value is comma, you can change it to any other')
+    
     return parser.parse_args()
 
 
