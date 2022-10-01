@@ -12,13 +12,49 @@ from datetime import datetime, timedelta
 from csv_extractor import *
 
 
-def lee_fichero_modifica_dataset(fichero_entrada, nuevas_columnas, delimiter=',', encoding='utf-8'):
+def genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter=',', encoding='latin-1'):
     '''
-        Esta función lee el dataset del fichero dado como entrada.
+        Esta función toma un csv dado como fichero de entrada, un diccionario con la 
+        configuración de columnas a añadir, el delimitador con el que se separan los campos
+        en el csv original, y la codificación del fichero original, y genera un nuevo
+        csv con el mismo nombre que el fichero original, pero acabado en _generated.csv,
+        que tiene las columnas del fichero original, más las generadas según la especificación
+        dada como parámetro.
         @param fichero_entrada: Nombre y ruta del fichero csv original
         @type fichero_entrada: str
+        @param nuevas_columnas: diccionario para especificar el nombre y tipo de cada una 
+            de las columnas a añadirle al csv original. La clave del diccionario es
+            el nombre de la nueva columna, y el valor otro diccionario para especificar
+            el tipo de la nueva columna, y cómo se genera. Un ejemplo de este diccionario es
+      
+        <code>  
+        nuevas_columnas = 
+            {'TIENE_MATERNAL': {'type': 'boolean'},
+             'NUM_CAMAS_MATERNAL': {'type': 'int', 'range': [0, 25]},
+             'MEDIA_OCUPACION_MATERNAL': {'type': 'float', 'range': [1.0, 45.5], 'step': 0.5},
+             'RESPONSABLE_REPETICION': {'type': 'str', 'values': ['R1', 'R2', 'R3'], 'randomize': True},
+             'RESPONSABLE_SIN_REPETICION': {'type': 'str', 'values': ['R'] * 83, 'randomize': False},
+             'FECHA_ULTIMA_REFORMA': {'type': 'datetime', 'range': ['01/01/2020', '31/12/2021'],
+                                                  'format': "%d/%m/%Y"}}
+        </code>
+        
+        con este diccionario se especifica lo  que se van a añadir las siguientes columnas:
+            * TIENE_MATERNAL, de tipo boolean. Los valores se generarán de forma aleatoria.
+            * NUM_CAMAS_MATERNAL, de tipo int. Los valores se generarán de forma aleatoria en el rango de 0 a 25.
+            * MEDIA_OCUPACION_MATERNAL, de tipo float. Los valores se generarán de forma aleatoria en el
+              rango 1.0, 45.5 con un paso de 0.5
+            * RESPONSABLE_REPETICION, de tipo str. Los valores se escogerán de la lista de valores pasada
+              como parámetro de forma aleatoria.
+            * RESPONSABLE_SIN_REPETICION, de tipo str. Los valores se escogerán de la lista de valores 
+              pasada como parámetro.
+            * FECHA_ULTIMA_REFORMA: de tipo fechahora. Los valores se generarán en el rango de fechas
+              del 1 de enero del 2020 al 31 de diciembre del 2021, y el formato de salida será "%d/%m/%Y"   
+          
+        @type nuevas_columnas: {str: Any}
+        @param delimiter: Delimitador que se usa para separar lo campos en el fichero original
+        @type delimiter: str
         @param encoding: Cadena que indica la codificación en la que está el fichero original. Si no se
-        especifica, por defecto se supone que el archivo está codificado en utf-8.
+        especifica, por defecto se supone que el archivo está codificado en latin-1.
         @type encoding: str
     '''
 
@@ -47,6 +83,7 @@ def add_nueva_columna(filas, nombre_columna, caracteristicas_columna):
     '''
 
     if caracteristicas_columna['type'] == 'boolean':
+
         boolean_muestra = [True, False]
         boolean_lista = np.random.choice(boolean_muestra, size=len(filas))
         filas = modifica_filas(filas, nombre_columna, boolean_lista)
@@ -121,9 +158,9 @@ def nombre_fichero_mejorado_salida(fichero_entrada):
     @param fichero_entrada: Nombre y ruta del fichero csv de entrada.
     @type fichero_entrada: str
     @return: El nombre del fichero de salida que se genera como el nombre del fichero de entrada,
-        sin la cadena ".csv" y terminado en "_improved.csv"
+        sin la cadena ".csv" y terminado en "_generated.csv"
     '''
-    return fichero_entrada.replace(".csv", "") + "_improved.csv"
+    return fichero_entrada.replace(".csv", "") + "_generated.csv"
 
 
 def main():

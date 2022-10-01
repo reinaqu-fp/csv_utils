@@ -4,7 +4,7 @@ Created on 22 oct 2021
 
 @author: reinaqu_2
 '''
-import improver
+import csv_generator
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
                          'FECHA_ULTIMA_REFORMA': {'type': 'datetime', 'range': ['01/01/2020', '31/12/2021'],
                                                   'format': "%d/%m/%Y"}}
 
-    improver.lee_fichero_modifica_dataset('../data/centrosSanitarios.csv', new_columns_param, delimiter=";")
+    csv_generator.genera_columnas_csv('../data/centrosSanitarios.csv', new_columns_param, delimiter=";")
 
 
 if __name__ == "__main__":
