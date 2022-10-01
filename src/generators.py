@@ -76,13 +76,15 @@ def generar_fechas(limite_inferior, limite_superior, formato, num_fechas):
     @type formato: str
      
     '''
-    fecha1 = datetime.strptime(limite_inferior, formato)
-    fecha2 = datetime.strptime(limite_superior, formato)
-    fechas_lista = []
-    for _ in range(num_fechas):
-        fecha_aux = generar_fecha(fecha1, fecha2)        
-        fechas_lista.append(fecha_aux.strftime(formato)) #añadir la fecha en formato str
-    return fechas_lista
+    # fecha1 = datetime.strptime(limite_inferior, formato)
+    # fecha2 = datetime.strptime(limite_superior, formato)
+    # fechas_lista = []
+    # for _ in range(num_fechas):
+    #     fecha_aux = generar_fecha(fecha1, fecha2)        
+    #     fechas_lista.append(fecha_aux.strftime(formato)) #añadir la fecha en formato str
+    # return fechas_lista
+    return generar_dates_times(limite_inferior, limite_superior, formato, num_fechas, generar_fecha)
+
 
 def generar_fecha (limite_inferior, limite_superior):
     '''
@@ -98,6 +100,25 @@ def generar_fecha (limite_inferior, limite_superior):
     randay = random.randrange(dias_totales)
     return limite_inferior + timedelta(days=randay)
 
+def generar_horas(limite_inferior, limite_superior, formato, num_horas):
+    '''
+    @param limite_inferior: Hora que marca el límite inferior del rango
+    @type limite_inferior: str  
+    @param limite_superior: Hora que marca el límite superior del rango
+    @type limite_superior: str
+    @param formato: Formato de la hora(en estilo Python)
+    @type formato: str
+     
+    '''
+    # fecha1 = datetime.strptime(limite_inferior, formato)
+    # fecha2 = datetime.strptime(limite_superior, formato)
+    # horas_lista = []
+    # for _ in range(num_horas):
+    #     fecha_aux = generar_hora(fecha1, fecha2)        
+    #     horas_lista.append(fecha_aux.strftime(formato)) #añadir la hora en formato str
+    # return horas_lista
+    return generar_dates_times(limite_inferior, limite_superior, formato, num_horas, generar_hora)
+
 def generar_hora (limite_inferior=None, limite_superior=None):
     '''
     @param limite_inferior: Hora que marca el límite inferior del rango. Si es None se consideran
@@ -111,15 +132,32 @@ def generar_hora (limite_inferior=None, limite_superior=None):
     '''
     # dias entre las dos fechas
     if limite_inferior == None:
-        limite_inferior = time(0,0)
+        limite_inferior = datetime.time(0,0)
     if limite_superior == None:
-        limite_superior = time(23,59)
-    hoy = date.today()    
-    minutos_totales = datetime.combine(hoy, limite_superior) - datetime.combine(hoy, limite_inferior)
+        limite_superior = datetime.time(23,59) 
+    minutos_totales = limite_superior -  limite_inferior
     randminutes = random.randrange(minutos_totales.total_seconds())//60
-    res = datetime.combine(hoy, limite_inferior) + timedelta(minutes=randminutes)
+    res =  limite_inferior + timedelta(minutes=randminutes)
     return res.time()
 
+def generar_fechas_horas(limite_inferior, limite_superior, formato, num_fechas):
+    '''
+    @param limite_inferior: Fecha que marca el límite inferior del rango
+    @type limite_inferior: str  
+    @param limite_superior: Fecha que marca el límite superior del rango
+    @type limite_superior: str
+    @param formato: Formato de la fecha (en estilo Python)
+    @type formato: str
+     
+    '''
+    # fecha1 = datetime.strptime(limite_inferior, formato)
+    # fecha2 = datetime.strptime(limite_superior, formato)
+    # fechas_horas_lista = []
+    # for _ in range(num_fechas):
+    #     fecha_aux = generar_fecha_hora(fecha1, fecha2)        
+    #     fechas_horas_lista.append(fecha_aux.strftime(formato)) #añadir la fecha en formato str
+    # return fechas_horas_lista
+    return generar_dates_times(limite_inferior, limite_superior, formato, num_fechas, generar_fecha_hora)
 def generar_fecha_hora (limite_inferior, limite_superior):
     '''
     @param limite_inferior: Fecha y hora que marca el límite inferior del rango
@@ -132,6 +170,16 @@ def generar_fecha_hora (limite_inferior, limite_superior):
     delta_seconds = (limite_superior - limite_inferior).total_seconds()
     randseconds = random.randrange(delta_seconds)
     return limite_inferior + timedelta(seconds=randseconds)
+
+def generar_dates_times(limite_inferior, limite_superior, formato, num_elems, func_generacion):
+    
+    fecha1 = datetime.strptime(limite_inferior, formato)
+    fecha2 = datetime.strptime(limite_superior, formato)
+    fechas_horas_lista = []
+    for _ in range(num_elems):
+        fecha_aux = func_generacion(fecha1, fecha2)        
+        fechas_horas_lista.append(fecha_aux.strftime(formato)) #añadir la fecha en formato str
+    return fechas_horas_lista
 
 
     

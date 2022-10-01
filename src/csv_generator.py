@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 '''
 Created on 22 oct 2021
+Updated on 1 oct 2022
 
 @author: Belen Ramos
+@contributor: Toñi Reina
 '''
 
 import csv
@@ -29,12 +31,26 @@ def genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter=',', encodin
         <code>  
         nuevas_columnas = 
             {'TIENE_MATERNAL': {'type': 'boolean'},
-             'NUM_CAMAS_MATERNAL': {'type': 'int', 'range': [0, 25]},
-             'MEDIA_OCUPACION_MATERNAL': {'type': 'float', 'range': [1.0, 45.5], 'step': 0.5},
-             'RESPONSABLE_REPETICION': {'type': 'str', 'values': ['R1', 'R2', 'R3'], 'randomize': True},
-             'RESPONSABLE_SIN_REPETICION': {'type': 'str', 'values': ['R'] * 83, 'randomize': False},
-             'FECHA_ULTIMA_REFORMA': {'type': 'date', 'range': ['01/01/2020', '31/12/2021'],
-                                                  'format': "%d/%m/%Y"}}
+             'NUM_CAMAS_MATERNAL': {'type': 'int', 
+                                    'range': [0, 25]},
+             'MEDIA_OCUPACION_MATERNAL': {'type': 'float', 
+                                          'range': [1.0, 45.5], 
+                                          'step': 0.5},
+             'RESPONSABLE_REPETICION': {'type': 'str', 
+                                        'values': ['R1', 'R2', 'R3'], 
+                                        'randomize': True},
+             'RESPONSABLE_SIN_REPETICION': {'type': 'str', 
+                                            'values': ['R'] * 83, 
+                                            'randomize': False},
+             'FECHA_ULTIMA_REFORMA': {'type': 'date', 
+                                      'range': ['01/01/2020', '31/12/2021'],
+                                      'format': "%d/%m/%Y"},
+             'HORA_CONSULTA':{'type': 'time',
+                              'range': ['08:30','15:00'],
+                              'format': "%H:%M"},
+             'FECHA_HORA':{'type': 'datetime',
+                              'range': ['01/01/2020 08:30','31/12/2021 15:00'],
+                              'format': "%d/%m/%Y %H:%M"}}
         </code>
         
         con este diccionario se especifica lo  que se van a añadir las siguientes columnas:
@@ -49,7 +65,11 @@ def genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter=',', encodin
               tenga el archivo original.
             * FECHA_ULTIMA_REFORMA: de tipo fechahora. Los valores se generarán en el rango de fechas
               del 1 de enero del 2020 al 31 de diciembre del 2021, y el formato de salida será "%d/%m/%Y"   
-          
+            * HORA_CONSULTA: de tipo hora. Los valores se generarán en el rango de horas
+              del las 8:30 a las 15:00, y el formato de salida será "%H:%M"   
+            * FECHA_HORA: de tipo fechahora. Los valores se generarán en el rango de fechas y horas
+              del 1 de enero del 2020 a las 8:30 al 1 de diciembre del 2021 las 15:00, y el formato de 
+              salida será "%d/%m/%Y %H:%M"   
         @type nuevas_columnas: {str: Any}
         @param delimiter: Delimitador que se usa para separar lo campos en el fichero original
         @type delimiter: str
@@ -62,13 +82,13 @@ def genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter=',', encodin
         lector = csv.DictReader(rf, delimiter=delimiter)
         filas = [l for l in lector]
         for c_nombre, c_caracteristicas in nuevas_columnas.items():
-            filas = add_nueva_columna(filas, c_nombre, c_caracteristicas)
+            agrega_nueva_columna(filas, c_nombre, c_caracteristicas)
 
         fichero_salida = nombre_fichero_salida_generado(fichero_entrada)
         escribe_fichero(fichero_salida, filas, encoding)
 
 
-def add_nueva_columna(filas, nombre_columna, caracteristicas_columna):
+def agrega_nueva_columna(filas, nombre_columna, caracteristicas_columna):
     '''
         Esta función añade al dataset una nueva columna con las características especificadas
         @param filas: las filas del dataset dadas como una lista de diccionarios
@@ -76,41 +96,48 @@ def add_nueva_columna(filas, nombre_columna, caracteristicas_columna):
         @param nombre_columna: nombre de la nueva columna que se añade al dataset original
         @type nombre_columna: str
         @param caracteristicas_columna: diccionario que contiene las características de la nueva columna a generar
-        @type caracteristicas_columna: dict
-
+        @type caracteristicas_columna: {str: Any}
         @return: la lista de filas modificada con la nueva columna añadida
         @rtype: list[dict]
     '''
     num_elems = len(filas)
     if caracteristicas_columna['type'] == 'boolean':
-        nueva_columna = generar_booleanos(num_elems)
+        datos_columna = generar_booleanos(num_elems)
     elif caracteristicas_columna['type'] == 'int':
-        nueva_columna = generar_enteros(caracteristicas_columna['range'][0], \
+        datos_columna = generar_enteros(caracteristicas_columna['range'][0], \
                                     caracteristicas_columna['range'][1], \
                                     num_elems)
     elif caracteristicas_columna['type'] == 'float':
-        nueva_columna = generar_reales(caracteristicas_columna['range'][0], \
+        datos_columna = generar_reales(caracteristicas_columna['range'][0], \
                                        caracteristicas_columna['range'][1], \
                                        caracteristicas_columna['step'], \
                                        num_elems)
     elif caracteristicas_columna['type'] == 'str':
         if caracteristicas_columna['randomize']:
-            nueva_columna = generar_cadenas(caracteristicas_columna['values'], \
+            datos_columna = generar_cadenas(caracteristicas_columna['values'], \
                                             num_elems)
         else:
-            nueva_columna = caracteristicas_columna['values']
+            datos_columna = caracteristicas_columna['values']
     elif caracteristicas_columna['type'] == 'date':
-        nueva_columna = generar_fechas(caracteristicas_columna['range'][0], \
+        datos_columna = generar_fechas(caracteristicas_columna['range'][0], \
                                        caracteristicas_columna['range'][1], \
                                        caracteristicas_columna['format'], \
                                        num_elems)
-        
-    filas = modifica_filas(filas, nombre_columna, nueva_columna)
-   
+    elif caracteristicas_columna['type'] == 'time':
+        datos_columna = generar_horas(caracteristicas_columna['range'][0], \
+                                       caracteristicas_columna['range'][1], \
+                                       caracteristicas_columna['format'], \
+                                       num_elems)
+    elif caracteristicas_columna['type'] == 'datetime':
+        datos_columna = generar_fechas_horas(caracteristicas_columna['range'][0], \
+                                       caracteristicas_columna['range'][1], \
+                                       caracteristicas_columna['format'], \
+                                       num_elems)    
+    agrega_datos_columna(filas, nombre_columna, datos_columna)
     return filas
 
     
-def modifica_filas(filas, nombre_columna, lista_valores):
+def agrega_datos_columna(filas, nombre_columna, lista_valores):
     '''
         Esta función añade a cada fila del dataset la nueva columna
         @param filas: las filas del dataset dadas como una lista de diccionarios
@@ -119,7 +146,6 @@ def modifica_filas(filas, nombre_columna, lista_valores):
         @type nombre_columna: str
         @param lista_valores: lista que contiene todos los valores que tomará la nueva columna en cada fila
         @type lista_valores: list
-
         @return: la lista de filas modificada con la nueva columna añadida
         @rtype: list[dict]
     '''
