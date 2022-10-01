@@ -1,0 +1,8 @@
+{"TIENE_MATERNAL": {"type": "boolean"}, 
+ "NUM_CAMAS_MATERNAL": {"type": "int", "range": [0, 25]}, 
+ "MEDIA_OCUPACION_MATERNAL": {"type": "float", "range": [1.0, 45.5], "step": 0.5}, 
+ "RESPONSABLE_REPETICION": {"type": "str", "values": ["R1", "R2", "R3"], "randomize": true}, 
+ "RESPONSABLE_SIN_REPETICION": {"type": "str", "values": ["R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R"], "randomize": false}, 
+ "FECHA_ULTIMA_REFORMA": {"type": "date", "range": ["01/01/2020", "31/12/2021"], "format": "%d/%m/%Y"}, 
+ "HORA_CONSULTA": {"type": "time", "range": ["08:30", "15:00"], "format": "%H:%M"}, 
+ "FECHA_HORA": {"type": "datetime", "range": ["01/01/2020 08:30", "31/12/2021 15:00"], "format": "%d/%m/%Y %H:%M"}}
