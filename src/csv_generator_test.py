@@ -26,7 +26,7 @@ def main():
                          }
 
     csv_generator.genera_columnas_csv('../data/centrosSanitarios.csv', new_columns_param, delimiter=";")
-
+    csv_generator.genera_columnas_csv_de_json('../data/centrosSanitarios.csv', '../data/columnas.json', delimiter=";")
 
 if __name__ == "__main__":
     main()
