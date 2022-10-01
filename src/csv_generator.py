@@ -6,10 +6,9 @@ Created on 22 oct 2021
 '''
 
 import csv
-import random
-import numpy as np
 from datetime import datetime, timedelta
 from csv_extractor import *
+from generators import *
 
 
 def genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter=',', encoding='latin-1'):
@@ -34,7 +33,7 @@ def genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter=',', encodin
              'MEDIA_OCUPACION_MATERNAL': {'type': 'float', 'range': [1.0, 45.5], 'step': 0.5},
              'RESPONSABLE_REPETICION': {'type': 'str', 'values': ['R1', 'R2', 'R3'], 'randomize': True},
              'RESPONSABLE_SIN_REPETICION': {'type': 'str', 'values': ['R'] * 83, 'randomize': False},
-             'FECHA_ULTIMA_REFORMA': {'type': 'datetime', 'range': ['01/01/2020', '31/12/2021'],
+             'FECHA_ULTIMA_REFORMA': {'type': 'date', 'range': ['01/01/2020', '31/12/2021'],
                                                   'format': "%d/%m/%Y"}}
         </code>
         
@@ -100,104 +99,16 @@ def add_nueva_columna(filas, nombre_columna, caracteristicas_columna):
                                             num_elems)
         else:
             nueva_columna = caracteristicas_columna['values']
-    elif caracteristicas_columna['type'] == 'datetime':
+    elif caracteristicas_columna['type'] == 'date':
         nueva_columna = generar_fechas(caracteristicas_columna['range'][0], \
                                        caracteristicas_columna['range'][1], \
-                                       caracteristicas_columna['format'])
+                                       caracteristicas_columna['format'], \
+                                       num_elems)
         
     filas = modifica_filas(filas, nombre_columna, nueva_columna)
    
     return filas
 
-def generar_booleanos(num_booleanos):
-    '''
-    Genera una lista aleatoria de booleanos
-    @param num_booleanos: número de booleanos a generar
-    @type num: int
-    @return: Una lista de booleanos generados de forma aleatoria. La lista tendrá tantos booleanos
-    como indique el parámetro num_booleanos  
-    @rtype: [boolean]
-    '''
-    boolean_muestra = [True, False]
-    return np.random.choice(boolean_muestra, size=num_booleanos)
-    
-def generar_enteros(limite_inferior, limite_superior, num_enteros):
-    '''
-    Genera una lista aleatoria de enteros
-    @param limite_inferior: Límite inferior del rango de enteros a generar
-    @type limite_inferior: int
-    @param limite_superior: Límite superior del rango de enteros a generar
-    @type limite_superior: int
-    @param num_enteros: Número de enteros a generar.
-    @type num_enteros: int  
-    @return:  Una lista de enteros en el rango [limite_inferior, limite_superior] generados
-    de forma aleatoria.
-    @rtype: [int] 
-    '''
-    return  np.random.randint(limite_inferior, limite_superior, num_enteros)
-
-def generar_reales(limite_inferior, limite_superior, paso, num_reales):
-    '''
-    Genera una lista de reales
-    @param limite_inferior: Límite inferior del rango de reales a generar
-    @type limite_inferior: float
-    @param limite_superior: Límite superior del rango de reales a generar
-    @type limite_superior: float
-    @param paso: Paso de generación
-    @type paso: float 
-    @param num_reales: Número de reales a generar.
-    @type num_reales: int  
-    @return:  Una lista de reales en el rango [limite_inferior, limite_superior] generados
-    de forma aleatoria  y con el paso dado como parámetro.
-    @rtype: [float]     
-    '''
-    random_float = np.arange(limite_inferior, limite_superior, paso.round(2))
-    return np.random.choice(random_float, size=num_reales)
-
-def generar_cadenas( lista_valores, num_cadenas):
-    '''
-    @param lista_valores: Lista de cadenas a partir de la cual se generará la lista 
-    resultado aleatoria
-    @type lista_valores: [str]
-    @param num_cadenas: Número de cadenas a generar en la lista resultado
-    @type num_cadenas: int
-    @return: Lista de cadenas generada aleatoriamente a partir de la lista de valores de entrada. La
-    lista resultante tendrá num_cadenas elementos.
-    @rtype: [str]    
-    '''
-    return np.random.choice(lista_valores, size=num_cadenas)
-
-def generar_fechas(limite_inferior, limite_superior, formato, num_fechas):
-    '''
-    @param limite_inferior: Fecha que marca el límite inferior del rango
-    @type limite_inferior: str  
-    @param limite_superior: Fecha que marca el límite superior del rango
-    @type limite_superior: str
-    @param formato: Formato de la fecha (en estilo Python)
-    @type formato: str
-     
-    '''
-    fecha1 = datetime.strptime(limite_inferior, formato)
-    fecha2 = datetime.strptime(limite_superior, formato)
-    fechas_lista = []
-    for _ in range(num_fechas):
-        fecha_aux = generar_fecha(fecha1, fecha2)        
-        fechas_lista.append(fecha_aux.strftime(formato)) #añadir la fecha en formato str
-    return fechas_lista
-
-def generar_fecha (limite_inferior, limite_superior):
-    '''
-    @param limite_inferior: Fecha que marca el límite inferior del rango
-    @type limite_inferior: datetime.date  
-    @param limite_superior: Fecha que marca el límite superior del rango
-    @type limite_superior: datetime.date
-    @return: Fecha generada aleatoriamente entre el limite inferior y el limite superior (ambos inclusive)
-    @rtype: datetime.date
-    '''
-    # dias entre las dos fechas
-    dias_totales = (limite_superior - limite_inferior).days
-    randay = random.randrange(dias_totales)
-    return limite_inferior + timedelta(days=randay)
     
 def modifica_filas(filas, nombre_columna, lista_valores):
     '''
