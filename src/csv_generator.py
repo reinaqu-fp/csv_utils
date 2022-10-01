@@ -89,6 +89,29 @@ def genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter=',', encodin
         escribe_fichero(fichero_salida, filas, encoding)
 
 
+def genera_columnas_csv_de_json(fichero_entrada, json_config, delimiter=',', encoding='latin-1'):
+    '''
+        Esta función toma un csv dado como fichero de entrada, un diccionario con la 
+        configuración de columnas a añadir, el delimitador con el que se separan los campos
+        en el csv original, y la codificación del fichero original, y genera un nuevo
+        csv con el mismo nombre que el fichero original, pero acabado en _generated.csv,
+        que tiene las columnas del fichero original, más las generadas según la especificación
+        dada como parámetro.
+        @param fichero_entrada: Nombre y ruta del fichero csv original
+        @type fichero_entrada: str
+        @param json_config: Nombre y ruta de un fichero en format json con la configuración de 
+        columnas a añadir
+        @type json_config: str
+        @param delimiter: Delimitador que se usa para separar lo campos en el fichero original
+        @type delimiter: str
+        @param encoding: Cadena que indica la codificación en la que está el fichero original. Si no se
+        especifica, por defecto se supone que el archivo está codificado en latin-1.
+        @type encoding: str
+    '''
+    nuevas_columnas = crea_config_de_json(json_config)
+    genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter, encoding)
+ 
+
 def agrega_nueva_columna(filas, nombre_columna, caracteristicas_columna):
     '''
         Esta función añade al dataset una nueva columna con las características especificadas
