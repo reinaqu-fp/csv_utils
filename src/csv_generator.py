@@ -11,7 +11,7 @@ import csv
 from datetime import datetime, timedelta
 from csv_extractor import *
 from generators import *
-from json_utils import *
+import json_utils
 
 
 def genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter=',', encoding='latin-1'):
@@ -108,7 +108,7 @@ def genera_columnas_csv_de_json(fichero_entrada, json_config, delimiter=',', enc
         especifica, por defecto se supone que el archivo está codificado en latin-1.
         @type encoding: str
     '''
-    nuevas_columnas = crea_config_de_json(json_config)
+    nuevas_columnas = json_utils.crea_config_de_json(json_config)
     genera_columnas_csv(fichero_entrada, nuevas_columnas, delimiter, encoding)
  
 
@@ -212,7 +212,7 @@ def main():
     if args.encoding:
         encoding = args.encoding
     logging.info("Escribiendo en ..." + fichero_salida)
-    conf_dict = crea_config_de_json(args.config[0])
+    conf_dict = json_utils.crea_config_de_json(args.config[0])
     separator = ','
     if args.separator:
         separator = args.separator
