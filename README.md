@@ -151,6 +151,12 @@ Puedes ver un ejemplo en el módulo `csv_generator_test`:
     csv_generator.genera_columnas_csv('../data/centrosSanitarios.csv', new_columns_param, delimiter=";")
 ```
 
+También puedes usar de forma programática la versión de la función que toma un archivo en formato json como parámetro de entrada en el que se define la configuración de las columnas que se quiere generar. También puedes ver un ejemplo en el módulo `csv_generator_test`:
+
+```python
+ csv_generator.genera_columnas_csv_de_json('../data/centrosSanitarios.csv', '../data/columnas.json', delimiter=";")
+```
+
 ### Uso desde la línea de comandos
 
 También puedes usar el script desde la línea de comandos. Ten en cuenta que para ejecutarlo debes situarte en la ruta donde tengas almacenado el módulo `csv_generator`, o tener bien configurado tu path. Un ejemplo de uso del script desde la línea de comandos lo tienes aquí:
